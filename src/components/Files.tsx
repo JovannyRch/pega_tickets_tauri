@@ -3,8 +3,6 @@ import * as XLSX from "xlsx";
 import { PDFDocument } from "pdf-lib";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-import { save } from "@tauri-apps/plugin-dialog";
-import { writeFile } from "@tauri-apps/plugin-fs";
 import { generatePdfForGroup } from "../utils/utils";
 
 const Files = () => {
@@ -137,7 +135,11 @@ const Files = () => {
         "__TAURI_IPC__" in window || "__TAURI_INTERNALS__" in window;
 
       if (isTauri) {
-        // 👉 Tauri: diálogo nativo y escritura con plugin-fs
+        const [{ save }, { writeFile }] = await Promise.all([
+          import("@tauri-apps/plugin-dialog"),
+          import("@tauri-apps/plugin-fs"),
+        ]);
+
         const filePath = await save({
           defaultPath: fileName,
           filters: [
@@ -179,17 +181,27 @@ const Files = () => {
   }
 
   return (
-    <div className="max-w-2xl p-6 mx-auto my-8 bg-white rounded-md shadow-md">
-      <h1 className="mb-4 text-2xl font-semibold text-center text-gray-700">
-        Generar PegaTickets
-      </h1>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-xl p-6 bg-white border border-slate-100 rounded-2xl shadow-md">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-semibold text-slate-900">
+            Generar PegaTickets
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Sube un archivo de Excel y genera un PDF listo para imprimir.
+          </p>
+        </div>
 
-      {!processing && (
-        <form onSubmit={handleSubmit} className="mb-6">
-          <div className="flex items-center justify-center">
-            <label className="flex flex-col items-center w-full px-4 py-6 tracking-wide text-blue-500 uppercase transition duration-300 ease-in-out bg-white border border-blue-500 rounded-lg shadow-lg cursor-pointer hover:bg-blue-500 hover:text-white">
-              <span className="mt-2 text-base leading-normal">
+        {/* Formulario de carga */}
+        {!processing && (
+          <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+            <label className="flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed border-sky-300 rounded-xl bg-sky-50/40 text-sky-700 cursor-pointer transition hover:bg-sky-50">
+              <span className="text-sm font-medium">
                 Selecciona archivo Excel
+              </span>
+              <span className="mt-1 text-xs text-slate-500">
+                Formatos permitidos: .xlsx, .xls
               </span>
               <input
                 type="file"
@@ -204,45 +216,63 @@ const Files = () => {
                 required
               />
             </label>
-          </div>
 
-          {excelFile && !processing && (
-            <>
-              <h1 className="mt-4 mb-2 text-2xl font-bold text-gray-700">
-                {excelFile.name}
-              </h1>
-              <button
-                type="submit"
-                disabled={!excelFile}
-                className="w-full px-4 py-2 mt-4 font-semibold text-white transition duration-300 ease-in-out bg-blue-500 rounded-lg shadow-md hover:bg-blue-600"
-              >
-                Procesar Archivo
-              </button>
-            </>
-          )}
-        </form>
-      )}
+            {excelFile && !processing && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-slate-800 truncate">
+                    {excelFile.name}
+                  </span>
+                </div>
 
-      {groups.length > 0 && (
-        <>
-          <div className="flex justify-center mb-4">
+                <button
+                  type="submit"
+                  disabled={!excelFile}
+                  className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-sky-600 rounded-lg shadow-sm hover:bg-sky-700 disabled:bg-sky-300 disabled:cursor-not-allowed transition"
+                >
+                  Procesar archivo
+                </button>
+              </div>
+            )}
+          </form>
+        )}
+
+        {/* Zona de descarga */}
+        {groups.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <span>
+                {groups.length} pega ticket
+                {groups.length !== 1 && "s"} listo
+                {groups.length !== 1 && "s"} para generar
+              </span>
+            </div>
+
             <button
               onClick={downloadMergedPdf}
               disabled={processing}
-              className="px-3 py-1 text-sm font-medium text-white transition duration-300 ease-in-out bg-green-500 rounded-md hover:bg-green-600"
+              className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-sky-600 rounded-lg shadow-sm hover:bg-sky-700 disabled:bg-sky-300 disabled:cursor-not-allowed transition"
             >
-              {processing
-                ? `Generando pega ticket ${currentProcessingFile} de ${groups.length}`
-                : `Descargar ${groups.length} pega tickets`}
+              {processing ? (
+                <>
+                  Generando pega ticket {currentProcessingFile} de{" "}
+                  {groups.length}
+                  <AiOutlineLoading3Quarters className="ml-2 h-4 w-4 animate-spin" />
+                </>
+              ) : (
+                <>Descargar {groups.length} pega ticket(s)</>
+              )}
             </button>
           </div>
-          <div className="flex justify-center mb-4">
-            {processing && (
-              <AiOutlineLoading3Quarters className="inline-block w-6 h-6 ml-2 animate-spin" />
-            )}
+        )}
+
+        {/* Spinner centrado si está procesando y aún no se muestra botón */}
+        {processing && groups.length === 0 && (
+          <div className="mt-6 flex justify-center">
+            <AiOutlineLoading3Quarters className="h-6 w-6 text-sky-600 animate-spin" />
           </div>
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 };
