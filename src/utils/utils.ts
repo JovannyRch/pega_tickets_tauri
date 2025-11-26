@@ -17,6 +17,25 @@ function chunkArray<T>(array: T[], size: number): T[][] {
   return chunks;
 }
 
+function formatCurrency(value: number | string | undefined): string {
+  if (value == null || value === "") return "";
+  const num = typeof value === "string" ? parseFloat(value) : value;
+  return num.toLocaleString("es-MX", {
+    style: "currency",
+    currency: "MXN",
+  });
+}
+
+export function excelSerialToDateString(serial: number): string {
+  // Excel cuenta días desde 1899-12-30
+  const excelEpoch = new Date(1899, 11, 30);
+  const ms = serial * 24 * 60 * 60 * 1000;
+  const date = new Date(excelEpoch.getTime() + ms);
+
+  // Ajusta el formato como lo quieres ver
+  return date.toLocaleDateString("es-MX"); // dd/mm/aaaa
+}
+
 function addImageToPage(
   page: PDFPage,
   logoImage: PDFImage,
@@ -207,11 +226,9 @@ export async function generatePdfForGroup(
       let textY = infoBoxY + 8;
       const lineSpacing = 11;
 
-      // ⚠️ Aquí también corregimos el valor de odómetro (ver parte B)
       const dia = formatValue(ticket.fecha);
       const folioCarga = formatValue(ticket.num_folio);
 
-      // si ticket.odometro viene vacío, intentamos otros nombres posibles
       const rawOdom =
         (ticket as any).odometro ??
         (ticket as any).ODOMETRO ??
@@ -224,7 +241,7 @@ export async function generatePdfForGroup(
 
       // Orden correcto
       const pairs: { label: string; value: string }[] = [
-        { label: "CONSUMO:", value: consumo },
+        { label: "CONSUMO:", value: formatCurrency(consumo) },
         { label: "ODÓMETRO:", value: odometro },
         { label: "FOLIO:", value: folioCarga },
         { label: "DÍA:", value: dia },

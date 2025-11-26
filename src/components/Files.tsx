@@ -5,7 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
-import { generatePdfForGroup } from "../utils/utils";
+import { excelSerialToDateString, generatePdfForGroup } from "../utils/utils";
 
 const Files = () => {
   const [excelFile, setExcelFile] = useState<File | null>(null);
@@ -30,33 +30,45 @@ const Files = () => {
         defval: null, // no borrar campos vacíos
       });
 
-      const normalizedRows: TicketRow[] = rawRows.map((r) => ({
-        n: r["N°"],
-        num_pat: r["NUM PAT"],
-        civ: r["CIV"],
-        placa: r["PLACA"],
-        num_serie: r["NUM SERIE"],
-        marca: r["MARCA"],
-        tipo: r["TIPO"],
-        mod: r["MOD"],
-        fecha: r["FECHA"],
-        num_folio: r["NUM FOLIO"],
-        odometro:
-          r["ODOMETRO"] ??
-          r["ODÓMETRO"] ??
-          r[" ODOMETRO"] ??
-          r["ODOMETRO "] ??
-          r["ODOMETRO"],
-        importe: r[" IMPORTE "] ?? r["IMPORTE"] ?? r["  IMPORTE  "],
-        combustible: r["COMBUSTIBLE"],
-        chofer: r["CHOFER"],
-        recorrido: r["RECORRIDO"],
-        observacion: r["OBSERVACION"],
-        folio: r["FOLIO"],
-        folio_fiscal: r["FOLIO FISCAL"],
-      }));
+      const normalizedRows: TicketRow[] = rawRows.map((r) => {
+        const rawFecha = r["FECHA"];
 
-      // groupBy('n') como en Laravel
+        let fecha: string | null = null;
+        if (typeof rawFecha === "number") {
+          // viene como 45729 → lo convertimos
+          fecha = excelSerialToDateString(rawFecha);
+        } else if (rawFecha != null) {
+          // ya viene como texto "13/03/2025"
+          fecha = String(rawFecha);
+        }
+
+        return {
+          n: r["N°"],
+          num_pat: r["NUM PAT"],
+          civ: r["CIV"],
+          placa: r["PLACA"],
+          num_serie: r["NUM SERIE"],
+          marca: r["MARCA"],
+          tipo: r["TIPO"],
+          mod: r["MOD"],
+          fecha: fecha,
+          num_folio: r["NUM FOLIO"],
+          odometro:
+            r["ODOMETRO"] ??
+            r["ODÓMETRO"] ??
+            r[" ODOMETRO"] ??
+            r["ODOMETRO "] ??
+            r["ODOMETRO"],
+          importe: r[" IMPORTE "] ?? r["IMPORTE"] ?? r["  IMPORTE  "],
+          combustible: r["COMBUSTIBLE"],
+          chofer: r["CHOFER"],
+          recorrido: r["RECORRIDO"],
+          observacion: r["OBSERVACION"],
+          folio: r["FOLIO"],
+          folio_fiscal: r["FOLIO FISCAL"],
+        };
+      });
+
       const grouped: GroupedData = {};
       for (const row of normalizedRows) {
         const key = row.n;
@@ -111,8 +123,6 @@ const Files = () => {
           continue;
         }
 
-        // 👈 AQUÍ va la llamada CORRECTA con 2 parámetros,
-        // igual que en tu versión que ya funcionaba:
         const pdfBytes = await generatePdfForGroup(groupKey, rows);
 
         allPdfBytes.push(pdfBytes);
