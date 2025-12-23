@@ -6,12 +6,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  color-scheme: light !important;
-}
-
-html {
-  color-scheme: light !important;
-  background: #ffffff !important;
 }
 
 html,
@@ -22,25 +16,4 @@ body,
     "Oxygen", "Ubuntu", "Cantarell", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #ffffff !important;
-  color: #1f2937 !important;
-  color-scheme: light !important;
-}
-
-body {
-  background: #ffffff !important;
-  color: #1f2937 !important;
-  color-scheme: light !important;
-}
-
-/* Forzar tema claro siempre */
-@media (prefers-color-scheme: dark) {
-  *,
-  html,
-  body,
-  #root {
-    background: #ffffff !important;
-    color: #1f2937 !important;
-    color-scheme: light !important;
-  }
 }

@@ -197,11 +197,11 @@ const Files = () => {
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-10 text-center">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 px-8 py-10 text-center">
           <h1 className="text-4xl font-bold text-white mb-2">PegaTickets</h1>
-          <p className="text-blue-100 text-lg">
+          <p className="text-blue-100 dark:text-blue-200 text-lg">
             Genera documentos PDF desde archivos Excel
           </p>
         </div>
@@ -209,9 +209,9 @@ const Files = () => {
         {/* Content */}
         <div className="p-8">
           {/* Configuración */}
-          <div className="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
+          <div className="mb-6 bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-gray-700">
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                 Tickets por página:
               </label>
               <div className="flex items-center gap-2">
@@ -221,26 +221,28 @@ const Files = () => {
                   max="3"
                   value={ticketsPerPage}
                   onChange={(e) => setTicketsPerPage(Number(e.target.value))}
-                  className="w-16 px-3 py-2 text-center border-2 border-gray-300 rounded-lg font-semibold text-gray-900 focus:border-blue-500 focus:outline-none"
+                  className="w-16 px-3 py-2 text-center border-2 border-gray-300 dark:border-gray-600 rounded-lg font-semibold text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none"
                   disabled={processing || groups.length > 0}
                 />
-                <span className="text-sm text-gray-500">tickets</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  tickets
+                </span>
               </div>
             </div>
           </div>
 
           {!processing && (
             <form onSubmit={handleSubmit}>
-              <div className="bg-gradient-to-br from-gray-50 to-blue-50 border-2 border-dashed border-blue-300 rounded-2xl p-12 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
+              <div className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 border-2 border-dashed border-blue-300 dark:border-blue-500 rounded-2xl p-12 text-center hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200">
                 <label className="flex flex-col items-center justify-center cursor-pointer">
                   <div className="text-7xl mb-5">📄</div>
-                  <span className="text-2xl font-bold text-gray-900 mb-3">
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                     Seleccionar archivo Excel
                   </span>
-                  <span className="text-base text-gray-600 mb-2">
+                  <span className="text-base text-gray-600 dark:text-gray-300 mb-2">
                     Arrastra tu archivo aquí o haz clic para seleccionar
                   </span>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-gray-400 dark:text-gray-500">
                     Formatos soportados: .xlsx, .xls
                   </span>
                   <input
@@ -260,9 +262,9 @@ const Files = () => {
 
               {excelFile && !processing && (
                 <div className="mt-8 space-y-5">
-                  <div className="flex items-center justify-between gap-4 p-6 bg-white rounded-2xl border-2 border-blue-300 shadow-md">
+                  <div className="flex items-center justify-between gap-4 p-6 bg-white dark:bg-gray-700 rounded-2xl border-2 border-blue-300 dark:border-blue-500 shadow-md">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
                         <svg
                           className="w-7 h-7 text-white"
                           fill="currentColor"
@@ -276,17 +278,17 @@ const Files = () => {
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-lg font-bold text-gray-900 truncate">
+                        <p className="text-lg font-bold text-gray-900 dark:text-white truncate">
                           {excelFile.name}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {(excelFile.size / 1024).toFixed(2)} KB
                         </p>
                       </div>
                     </div>
                     <div className="flex-shrink-0">
                       <svg
-                        className="w-8 h-8 text-green-500"
+                        className="w-8 h-8 text-green-500 dark:text-green-400"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -310,9 +312,9 @@ const Files = () => {
           )}
 
           {groups.length > 0 && (
-            <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-2xl p-8">
+            <div className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 border-2 border-green-200 dark:border-green-600 rounded-2xl p-8">
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
+                <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 flex items-center justify-center shadow-lg">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -327,12 +329,12 @@ const Files = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                   ¡Archivo procesado!
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
                   Se encontraron{" "}
-                  <span className="font-bold text-blue-600">
+                  <span className="font-bold text-blue-600 dark:text-blue-400">
                     {groups.length}
                   </span>{" "}
                   {groups.length === 1 ? "ticket" : "tickets"} para generar
@@ -340,7 +342,7 @@ const Files = () => {
                 <button
                   onClick={downloadMergedPdf}
                   disabled={processing}
-                  className="w-full max-w-sm px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="w-full max-w-sm px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-xl hover:from-blue-700 hover:to-blue-800 dark:hover:from-blue-800 dark:hover:to-blue-900 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {processing
                     ? `Generando ticket ${currentProcessingFile} de ${groups.length}...`
@@ -348,8 +350,8 @@ const Files = () => {
                 </button>
                 {processing && (
                   <div className="flex items-center gap-2 mt-4">
-                    <AiOutlineLoading3Quarters className="w-5 h-5 text-blue-600 animate-spin" />
-                    <span className="text-sm font-medium text-gray-600">
+                    <AiOutlineLoading3Quarters className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                       Procesando, por favor espera...
                     </span>
                   </div>
