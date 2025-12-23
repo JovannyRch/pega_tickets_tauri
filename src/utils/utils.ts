@@ -78,7 +78,8 @@ function addImageToPage(
 
 export async function generatePdfForGroup(
   groupKey: string | number,
-  groupRows: TicketRow[]
+  groupRows: TicketRow[],
+  ticketsPerPage: number = 2
 ): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -97,7 +98,7 @@ export async function generatePdfForGroup(
   const marginTop = 40;
   const marginBottom = 30;
 
-  const chunks = chunkArray(groupRows, 3);
+  const chunks = chunkArray(groupRows, ticketsPerPage);
 
   for (const chunk of chunks) {
     const page = pdfDoc.addPage(A4);
